@@ -1,0 +1,194 @@
+var SUBSETCORRECT = "subsetcorrect";
+var ONE2ONE = "one2one";
+var SCORE_BASED = "scoreBased";
+var answerMap = {
+    "answerA": 0,
+    "answerB": 1,
+    "answerC": 2,
+    "answerD": 3
+}
+var questions = [
+    {
+        text: "Hello!",
+        answer: 2,
+        answers: ["blue", "purple", "white", "yellow"]
+    },
+     {
+        text: "Halooooooo",
+        answer: 0,
+        answers: ["Germany", "Austria", "France", "United States"]
+    },
+     {
+        text: "Sushi are made of rice and ",
+        answer: 3,
+        answers: ["Chicken", "Pineapple", "Leather", "Raw fish"]
+    },
+     {
+        text: "Football is played with",
+        answer: 1,
+        answers: ["A sword", "A ball", "A helmet", "A tuba"]
+    }
+];
+
+function Quizz(){
+    var that = this;
+    that.currentQuestion = 0;
+    that.results = [];
+    that.onReceiveMsg=function(msg){
+
+   };
+    that.sendMsgToUnity=function(json){
+    };
+
+    that.incomingFromUnity=function(json){
+
+    };
+    that.init = function(){
+        cinimeCommunicator.sendLogToUnity( "html game init start" );
+        that.questionDiv = document.getElementById("question");
+        that.answerDivs = [document.getElementById("answerA"), document.getElementById("answerB"),document.getElementById("answerC"),document.getElementById("answerD")];
+        that.nextDiv = document.getElementById("next");
+        that.quizzDiv = document.getElementById("quizz");
+        that.startDiv = document.getElementById("start");
+        that.endDiv = document.getElementById("end");
+        that.resultSpan = document.getElementById("result");
+        that.questionsTotal = document.getElementById("questionsTotal");
+        that.nextButton = document.getElementById("nextButton");
+        that.scoreBasedButton = document.getElementById("play-score-based");
+        that.one2oneButton = document.getElementById("play-one2one");
+        that.subsetcorrectButton = document.getElementById("play-subsetcorrect");
+        that.sendScoreButton = document.getElementById("send-score");
+        that.closeButton = document.getElementById("close-button");
+        that.subscribeToEvents();
+        that.ua = navigator.userAgent.toLowerCase();
+        that.android = that.ua.indexOf('android') > -1 ? true : false;
+        that.ios = ( that.ua.indexOf('iphone') > -1 || that.ua.indexOf('ipad') > -1  ) ? true : false;
+        cinimeCommunicator.sendLogToUnity( "html game init end" );
+    };
+    that.startGame = function (mode){
+        that.mode = mode;
+        that.hideStart();
+        that.showQuizz();
+        that.drawQuestion();
+    };
+    that.showMenu = function(){
+        that.startDiv.className = "start";
+    };
+    that.subscribeToEvents = function(){
+        that.answerDivs.forEach(function(answerDiv){
+            answerDiv.addEventListener("click", function(e){
+                that.onClickOnAnswer(answerMap[e.target.id]);
+            });
+        });
+        that.nextButton.addEventListener("click", function(e){
+            that.onClickOnNext();
+        });
+        that.scoreBasedButton.addEventListener("click", function(e){
+            that.startGame(SCORE_BASED);
+        });
+        that.one2oneButton.addEventListener("click", function(e){
+            that.startGame(ONE2ONE);
+        });
+        that.subsetcorrectButton.addEventListener("click", function(e){
+            that.startGame(SUBSETCORRECT);
+        });
+        that.sendScoreButton.addEventListener("click", function(e){
+            if (that.mode == SUBSETCORRECT || that.mode == ONE2ONE){
+                that.sendScoreUsingSubsetcorrect();
+            }
+            if (that.mode == SCORE_BASED){
+                that.sendScoreUsingScoreBased();
+            }
+            setTimeout(function(){
+                CinimeGameController.getCinimeCommunicator().sendCloseMsg();             
+            }, 3000);
+        });
+        that.closeButton.addEventListener("click", function(e){
+            CinimeGameController.getCinimeCommunicator().sendCloseMsg();
+        });
+        
+    };
+    that.drawQuestion = function(){
+        var question = questions[that.currentQuestion];
+        that.questionDiv.innerText = question.text;
+        that.answerDivs.forEach(function(answerDiv, i){
+            answerDiv.innerText = question.answers[i];
+        });
+    };
+
+    that.sendScores = function(value){
+        CinimeGameController.getCinimeCommunicator().sendScores(value);
+    };
+    that.sendScoreUsingScoreBased = function(){
+        var score = that.score*10;
+        that.sendScores(score);
+    };
+    that.sendScoreUsingOne2one = function(){
+
+    };
+    that.sendScoreUsingSubsetcorrect = function(){
+
+        var indexResults = [];
+        that.results.forEach(function(result, index){
+            if (result){
+                indexResults.push(index + 1);
+            }
+        });
+        var resultString = indexResults.join(",") 
+        that.sendScores(resultString);
+    };
+
+
+    that.showNext = function (screenToDisplay){
+        that.nextDiv.className += " "+screenToDisplay;
+        that.quizzDiv.className = "hidden";
+    };
+    that.hideNext = function (){
+        that.nextDiv.className = "next";
+    };
+    that.showQuizz = function(){
+        that.quizzDiv.className = "";
+    }
+    that.hideStart = function (){
+        that.startDiv.className = "hidden";
+    };
+    that.onClickOnNext = function (){
+        that.currentQuestion += 1;
+        that.hideNext();
+        that.showQuizz();
+        if (that.currentQuestion >= questions.length){
+            var score = 0;
+            that.results.forEach(function(result){
+                if (result) {
+                    score += 1;
+                }
+            });
+            that.score = score;
+            that.showEnd();
+        } else {
+            that.drawQuestion();
+        }
+    };
+    that.showEnd = function(){
+        that.quizzDiv.className = "hidden";
+        that.endDiv.className = "shown";
+        that.resultSpan.innerText = that.score;
+        that.questionsTotal.innerText = that.results.length;
+    };
+
+    that.onClickOnAnswer = function (answer){
+        if (answer == questions[that.currentQuestion].answer){
+            that.results.push(true);
+            that.showNext("success");
+        } else {
+            that.results.push(false)
+            that.showNext("failure");
+        }
+    };
+
+    
+}
+
+    
+
+

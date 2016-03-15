@@ -1,0 +1,178 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, 
+	user-scalable=no, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <script src="./cinimeCommunicator.js.bin"></script>
+    <script src="./game.js.bin"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div>
+        <div class="close-button" id="close-button">X</div>
+        <div id="next" class="next">
+            <div class="success-message">
+                <h1>Good answer!</h1>
+            </div>
+            <div class="failure-message">
+                <h1>Too bad!</h1>
+            </div>
+            <button type="button" id="nextButton">Next</button>
+        </div>
+        <div id="quizz" class="hidden">
+            <div id="question"></div>
+            <div class="answers">
+                <div class="answer" id="answerA"></div>
+                <div class="answer" id="answerB"></div>
+                <div class="answer" id="answerC"></div>
+                <div class="answer" id="answerD"></div>
+            </div>
+        </div>
+        <div id="start" class="start hidden">
+            Hey, let's play a quizz.
+            <div class="buttons">
+                <button id="play-score-based">
+                    Play with score based
+                </button>
+                <button id="play-one2one">
+                    Play with One2One
+                </button>
+                <button id="play-subsetcorrect">
+                    Play with SubsetCorrect
+                </button>
+            </div>
+        </div>
+        <div id="end" class="end">
+            Congrats, you had <span id="result"></span>/<span id="questionsTotal"></span> good answers.
+            <div>
+                <button id="send-score">
+                    Send your score
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+    ///////////////////////////
+    ///     CINIME VARS     ///
+    //////////////////////////
+    var cinimeCommunicator;
+
+    //Injected vars.  If the injected vars do not exist at this point, it means they have not been injected, so we declare them ( as global ) in order to play the game on the browser, where no injection from the Unity side will ever occur.
+
+
+    ///////////////////////////
+    ///  END  CINIME VARS   ///
+    //////////////////////////
+
+    var __screenWidth = -1;
+    var __screenHeight = -1;
+
+    var urlParams;
+
+
+
+    function loadPage(url) {
+        window.location = url;
+    }
+
+    //game
+    var game;
+    var uniqueId;
+    //////////////////////////
+
+    console.log("test");
+
+
+
+    // http://paulirish.com/2011/requestanimationframe-for-smart-animating
+    // shim layer with setTimeout fallback
+    window.requestAnimFrame = (function() {
+        return window.requestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            window.oRequestAnimationFrame ||
+            window.msRequestAnimationFrame ||
+            function(callback) {
+                window.setTimeout(callback, 1000 / 60);
+            };
+    })();
+
+
+
+
+
+    window.addEventListener('load', init, false);
+
+    function init() {
+        // alert("init");
+
+        setTimeout(function() {
+            if (window.__gameStartTime) {
+                startup();
+            } else {
+                setTimeout(init, 1000);
+            }
+        }, 1000);
+        //startup( );
+
+
+
+    }
+
+    function startGame() {
+        game.showMenu();
+        //game.startGame();
+
+    }
+
+    function startup() {
+        // alert("init");
+
+        cinimeCommunicator = new CinimeCommunicator();
+        cinimeCommunicator.setCampaignId(__campaignId);
+        cinimeCommunicator.setUniqueId(uniqueId);
+
+        cinimeCommunicator.sendLogToUnity("Init from javascript: __gameStartTime: " + __gameStartTime + " __campaignId: " + __campaignId + "__timeSynced: " + __timeSynced);
+
+        console.log("__gameStartTime " + __gameStartTime);
+        console.log("__timeSynced " + __timeSynced);
+
+        cinimeCommunicator.sendLogToUnity("__screenWidth: " + __screenWidth + " __screenHeight: " + __screenHeight);
+
+
+        if (__screenWidth == -1)
+            __screenWidth = window.innerWidth;
+
+        if (__screenWidth < 300) __screenWidth = 300;
+        if (__screenHeight == -1)
+            __screenHeight = window.innerHeight;
+
+        if (__screenHeight < 400) __screenHeight = 400;
+
+
+        game = new Quizz(__screenWidth, __screenHeight, 1, 0, 0);
+        //tapGame.setCinimeCommunicator(cinimeCommunicator);
+        CinimeGameController.setCinimeCommunicator(cinimeCommunicator);
+        CinimeGameController.setGame(game);
+        game.init();
+        startGame();
+
+        /* cinimeCommunicator.sendLogToUnity( "realDelay: " +  millisecondDelay);
+         if(millisecondDelay>0)
+         {
+        	showWelcomeScreen();
+
+        setTimeout(function() {startGame();},1000);
+          }
+        	else startGame();
+        	*/
+
+    }
+    </script>
+</body>
+
+</html>

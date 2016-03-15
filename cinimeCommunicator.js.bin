@@ -1,0 +1,80 @@
+
+var CinimeGameController = (function() {
+ var _instance=null;
+ var _game=null;
+ var _cinimeCommunicator=null;
+
+
+  return { // public interface
+    setCinimeCommunicator: function (communicator) {
+      _cinimeCommunicator=communicator;
+    },
+     getCinimeCommunicator: function () {
+      return _cinimeCommunicator;
+    },
+    setGame: function (game) {
+    	_game=game;
+    },
+    getGame: function () {
+      return _game;
+    }
+  };
+})();
+
+
+
+
+function CinimeCommunicator()
+ {
+  this.campaignId=0;
+  this.uniqueId=0;
+
+this.setCampaignId=function(campaignId)
+{
+this.campaignId=campaignId;
+}
+
+this.setUniqueId=function(uniqueId)
+{
+this.uniqueId=uniqueId;
+}
+
+this.sendScores=function(scoresStringArray)
+{
+ var url= "uniwebview://htmlGame?scores="+scoresStringArray+"&campaignId="+this.campaignId;
+ console.log(url);
+ window.location =url;
+}
+
+this.sendAnalyticsData=function(event,eventCategory,breadCrumb)
+{
+ var url= "uniwebview://analytics?event="+event+"&eventCategory="+eventCategory+"&breadCrumb="+breadCrumb;
+ console.log(url);
+ window.location =url;
+}
+
+this.sendCloseMsg=function()
+{
+ var url= "uniwebview://close?param=true";
+ console.log(url);
+ window.location =url;
+}
+
+this.sendCloseMsgStartTimePast=function()
+{
+ var url= "uniwebview://closeMsgStartTimePast?param=true";
+ console.log(url);
+ window.location =url;
+}
+
+this.sendLogToUnity=function(logMsg)
+   {
+     var url= "uniwebview://logToUnity?msg="+logMsg;
+	console.log(url);
+	 window.location =url;
+   }
+   
+  
+
+
+ }
