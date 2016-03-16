@@ -13,7 +13,7 @@ var CinimeGameController = (function() {
       return _cinimeCommunicator;
     },
     setGame: function (game) {
-    	_game=game;
+      _game=game;
     },
     getGame: function () {
       return _game;
@@ -70,8 +70,8 @@ this.sendCloseMsgStartTimePast=function()
 this.sendLogToUnity=function(logMsg)
    {
      var url= "uniwebview://logToUnity?msg="+logMsg;
-	console.log(url);
-	 window.location =url;
+  console.log(url);
+   window.location =url;
    }
    
   
