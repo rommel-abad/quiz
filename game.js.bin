@@ -5,28 +5,27 @@ var answerMap = {
     "answerA": 0,
     "answerB": 1,
     "answerC": 2,
-    "answerD": 3
 }
 var questions = [
     {
-        text: "Hello!",
-        answer: 2,
-        answers: ["blue", "purple", "white", "yellow"]
-    },
-     {
-        text: "Halooooooo",
+        text: "Emperor Kuzco was turned into what in the movie 'The Emperor's New Groove'?",
         answer: 0,
-        answers: ["Germany", "Austria", "France", "United States"]
+        answers: ["Llama", "Camel", "Bird"]
     },
      {
-        text: "Sushi are made of rice and ",
-        answer: 3,
-        answers: ["Chicken", "Pineapple", "Leather", "Raw fish"]
+        text: "Eve is a robot from which Disney movie?",
+        answer: 2,
+        answers: ["Lilo & Stitch", "Blade Runner", "Wall-E"]
     },
      {
-        text: "Football is played with",
-        answer: 1,
-        answers: ["A sword", "A ball", "A helmet", "A tuba"]
+        text: "Orlando Bloom played which character in Pirates of the Carribean films?",
+        answer: 2,
+        answers: ["Jacob Turner", "Jack Sparrow", "William Turner"]
+    },
+     {
+        text: "Which house does Harry, Ron and Hermione belong to?",
+        answer: 0,
+        answers: ["A Gryfindor", "Slytherin", "Ravenclaw"]
     }
 ];
 
@@ -46,7 +45,7 @@ function Quizz(){
     that.init = function(){
         cinimeCommunicator.sendLogToUnity( "html game init start" );
         that.questionDiv = document.getElementById("question");
-        that.answerDivs = [document.getElementById("answerA"), document.getElementById("answerB"),document.getElementById("answerC"),document.getElementById("answerD")];
+        that.answerDivs = [document.getElementById("answerA"), document.getElementById("answerB"),document.getElementById("answerC")];
         that.nextDiv = document.getElementById("next");
         that.quizzDiv = document.getElementById("quizz");
         that.startDiv = document.getElementById("start");
