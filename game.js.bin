@@ -1,4 +1,6 @@
 var SUBSETCORRECT = "subsetcorrect";
+var ONE2ONE = "one2one";
+var SCORE_BASED = "scoreBased";
 var answerMap = {
     "answerA": 0,
     "answerB": 1,
@@ -51,6 +53,8 @@ function Quizz(){
         that.resultSpan = document.getElementById("result");
         that.questionsTotal = document.getElementById("questionsTotal");
         that.nextButton = document.getElementById("nextButton");
+        that.scoreBasedButton = document.getElementById("play-score-based");
+        that.one2oneButton = document.getElementById("play-one2one");
         that.subsetcorrectButton = document.getElementById("play-subsetcorrect");
         that.sendScoreButton = document.getElementById("send-score");
         that.closeButton = document.getElementById("close-button");
@@ -78,12 +82,21 @@ function Quizz(){
         that.nextButton.addEventListener("click", function(e){
             that.onClickOnNext();
         });
+        that.scoreBasedButton.addEventListener("click", function(e){
+            that.startGame(SCORE_BASED);
+        });
+        that.one2oneButton.addEventListener("click", function(e){
+            that.startGame(ONE2ONE);
+        });
         that.subsetcorrectButton.addEventListener("click", function(e){
             that.startGame(SUBSETCORRECT);
         });
         that.sendScoreButton.addEventListener("click", function(e){
-            if (that.mode == SUBSETCORRECT){
+            if (that.mode == SUBSETCORRECT || that.mode == ONE2ONE){
                 that.sendScoreUsingSubsetcorrect();
+            }
+            if (that.mode == SCORE_BASED){
+                that.sendScoreUsingScoreBased();
             }
             setTimeout(function(){
                 CinimeGameController.getCinimeCommunicator().sendCloseMsg();             
@@ -104,6 +117,13 @@ function Quizz(){
 
     that.sendScores = function(value){
         CinimeGameController.getCinimeCommunicator().sendScores(value);
+    };
+    that.sendScoreUsingScoreBased = function(){
+        var score = that.score*10;
+        that.sendScores(score);
+    };
+    that.sendScoreUsingOne2one = function(){
+
     };
     that.sendScoreUsingSubsetcorrect = function(){
 
@@ -167,7 +187,3 @@ function Quizz(){
 
     
 }
-
-    
-
-
