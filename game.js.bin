@@ -25,7 +25,7 @@ var questions = [
      {
         text: "Which house does Harry, Ron and Hermione belong to?",
         answer: 0,
-        answers: ["A Gryfindor", "Slytherin", "Ravenclaw"]
+        answers: ["Gryfindor", "Slytherin", "Ravenclaw"]
     }
 ];
 
